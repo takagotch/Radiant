@@ -34,12 +34,42 @@ class CustomTagsExtension < Radiant::Extension
   end
 end
 
-require File.dirname() + '/../spec_helper'
-describe '' do
+require File.dirname(__FILE__) + '/../spec_helper'
+describe 'CustomTags' do
   dataset :pages
-  describe '' do
+  describe '<r:box>' do
+    it 'should render the correct HTML' do
+      tag = '<r:box icon="happyface" title="Test Title"></r:box>'
+      expected = %{<div class="box">}
+  <h2>
+    <img src="/images/icons/happyface.png" />
+    Test Title
+  </h2>
+  <div class="content">
+  <div class="content">
+    Content
+  </div>
+</div>}
+      pages(:home).should render(tag).as(expected)
+    end
   end
 end
+
+module CustomTags
+  include Radiant::Taggable
+  desc "Creates an HTML box with a title, icon and body content"
+  tag "box" do |tag|
+    ""
+  end
+end
+
+Page.send :include, CustomTags
+
+de activate
+  admin.tags.add "Custom Tags", "/admin/custom_tags"
+end
+
+admin.tabs["Snippets"].visibility = [:developer, :admin]
 
 
 ```
